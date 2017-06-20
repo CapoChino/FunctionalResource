@@ -51,16 +51,16 @@ class ProHttp {
 
 // MARK: Simple
 
-struct SimpleObject {
+struct Employee {
     var name: String
-    var foo: Int
+    var iq: Int
     
     init(ir: Resource.DownloadedData) throws {
         guard let name = ir["name"] as? String else { throw PlaceholderError.something }
-        guard let foo = ir["foo"] as? Int else { throw PlaceholderError.something }
+        guard let iq = ir["iq"] as? Int else { throw PlaceholderError.something }
         
         self.name = name
-        self.foo = foo
+        self.iq = iq
     }
 }
 
@@ -74,15 +74,6 @@ struct SimpleObject {
 //    }
 //}
 
-let simpleResourceSuccess = Resource(
-    download: { completion in
-        completion(Result.success(["foo": 1, "name": "bradley"]))
-},
-    import: { downloadedData in
-        let obj = try SimpleObject(ir: downloadedData)
-        print("Sure, I'll 'save' this for you: \(obj)")
-}
-)
 
 // MARK: CoreData
 

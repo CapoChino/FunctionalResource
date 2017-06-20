@@ -57,6 +57,14 @@ class FunctionalResourceTests: XCTestCase {
         self.waitForExpectations(timeout: 2, handler: nil)
     }
     
+    func testSimpleImport() {
+        let data: Resource.DownloadedData = ["iq" : 319, "name" : "Bradley"]
+        let bradley = try! Employee(ir: data)
+        XCTAssertEqual(bradley.name, "Bradley")
+        XCTAssertEqual(bradley.iq, 319)
+    }
+    
+    
 //    func testExample() {
 //        let r = Punch.all()
 //        //let r = simpleResourceError
