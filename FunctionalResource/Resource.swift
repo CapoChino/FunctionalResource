@@ -19,7 +19,7 @@ enum Result<T> {
 }
 
 struct Resource {
-    typealias DownloadedData = [String: Any]
+    typealias DownloadedData = [String: AnyHashable]
     typealias Downloader = (_ completion: @escaping (Result<DownloadedData>) -> Void) -> Void
     typealias Importer = (DownloadedData) throws -> Void
     
@@ -41,8 +41,9 @@ struct Resource {
 
 // MARK: Mocks
 class ProHttp {
-    static func get(url: URL, completion: @escaping (Result<[String: Any]>) -> Void) {
-        let result = Result.success(["foo": 1, "name": "bradley"])
+    static func get(url: URL, completion: @escaping (Result<[String: AnyHashable]>) -> Void) {
+        let data: [String: AnyHashable] = ["foo": 1, "name": "bradley"]
+        let result = Result.success(data)
         print("Downloading: \(result)")
         completion(result)
     }

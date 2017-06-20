@@ -36,6 +36,22 @@ class FunctionalResourceTests: XCTestCase {
         simpleResourceError.load()
     }
     
+    func testSimpleDownloadSuccess() {
+        let theData = ["answer": "fourty-two"]
+        let exp = self.expectation(description: "import called")
+        let simpleResourceError = Resource(
+            download: { completion in
+                completion(Result.success(theData))
+        },
+            import: { downloadedData in
+                XCTAssertEqual(downloadedData, theData)
+                exp.fulfill()
+        }
+        )
+        simpleResourceError.load()
+        self.waitForExpectations(timeout: 2, handler: nil)
+    }
+    
 //    func testExample() {
 //        let r = Punch.all()
 //        //let r = simpleResourceError
