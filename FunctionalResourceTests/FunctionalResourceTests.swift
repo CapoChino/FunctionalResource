@@ -25,27 +25,32 @@ class FunctionalResourceTests: XCTestCase {
     }
     
     func testSimpleDownloadError() {
+        let downloadCalled = self.expectation(description: "download called")
         let simpleResourceError = Resource(
             download: { completion in
                 completion(Result.failure(PlaceholderError.something))
+                downloadCalled.fulfill()
         },
             import: { downloadedData in
                 XCTFail("This should never happen!")
         }
         )
         simpleResourceError.load()
+        self.waitForExpectations(timeout: 2, handler: nil)
     }
     
     func testSimpleDownloadSuccess() {
         let theData = ["answer": "fourty-two"]
-        let exp = self.expectation(description: "import called")
+        let downloadCalled = self.expectation(description: "download called")
+        let importCalled = self.expectation(description: "import called")
         let simpleResourceError = Resource(
             download: { completion in
                 completion(Result.success(theData))
+                downloadCalled.fulfill()
         },
             import: { downloadedData in
                 XCTAssertEqual(downloadedData, theData)
-                exp.fulfill()
+                importCalled.fulfill()
         }
         )
         simpleResourceError.load()
