@@ -25,6 +25,18 @@ struct Resource {
     
     let download: Downloader
     let `import`: Importer
+    
+    func load() {
+        self.download { result in
+            switch(result) {
+            case .success(let downloadedData):
+                print("Download success, ready to import.")
+                try! self.import(downloadedData)
+            case .failure(let error):
+                print("Download ERROR: \(error).")
+            }
+        }
+    }
 }
 
 // MARK: Mocks
@@ -60,15 +72,6 @@ struct SimpleObject {
 //        simpleObject.foo = foo
 //    }
 //}
-
-let simpleResourceError = Resource(
-    download: { completion in
-        completion(Result.failure(PlaceholderError.something))
-},
-    import: { downloadedData in
-        print("This should never be printed!")
-}
-)
 
 let simpleResourceSuccess = Resource(
     download: { completion in

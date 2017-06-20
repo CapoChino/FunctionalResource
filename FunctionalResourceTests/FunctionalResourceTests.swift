@@ -24,6 +24,18 @@ class FunctionalResourceTests: XCTestCase {
         super.tearDown()
     }
     
+    func testSimpleDownloadError() {
+        let simpleResourceError = Resource(
+            download: { completion in
+                completion(Result.failure(PlaceholderError.something))
+        },
+            import: { downloadedData in
+                XCTFail("This should never happen!")
+        }
+        )
+        simpleResourceError.load()
+    }
+    
 //    func testExample() {
 //        let r = Punch.all()
 //        //let r = simpleResourceError
