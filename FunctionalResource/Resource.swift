@@ -83,7 +83,7 @@ func employeeImport() -> Resource.Importer {
 
 class Employee2 {
     var name: String?
-    var iq: Int?
+    var iq: Int32?
 }
 
 extension Employee2 {
@@ -93,11 +93,22 @@ extension Employee2 {
         guard let iq = ir["iq"] as? Int else { throw PlaceholderError.something }
         
         self.name = name
-        self.iq = iq
+        self.iq = Int32(iq)
     }
 }
 
-// MARK: CoreData
+// Working with a CoreData Object
+
+extension CDEmployee {
+    // Note this member function is a Resource.Importer
+    func `import`(ir: Resource.DownloadedData) throws {
+        guard let name = ir["name"] as? String else { throw PlaceholderError.something }
+        guard let iq = ir["iq"] as? Int else { throw PlaceholderError.something }
+        
+        self.name = name
+        self.iq = Int32(iq)
+    }
+}
 
 class Punch: NSManagedObject {
     @NSManaged var name: String

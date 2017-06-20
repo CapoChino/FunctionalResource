@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import CoreData
 @testable import FunctionalResource
 
 // MARK: Mocks
@@ -14,9 +15,28 @@ import XCTest
 
 class FunctionalResourceTests: XCTestCase {
     
+    var mainMoc: NSManagedObjectContext!
+    
     override func setUp() {
         super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        mainMoc = setUpInMemoryManagedObjectContext()
+    }
+    
+    func setUpInMemoryManagedObjectContext() -> NSManagedObjectContext {
+        let managedObjectModel = NSManagedObjectModel.mergedModel(from: [Bundle.main])!
+        
+        let persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: managedObjectModel)
+        
+        do {
+            try persistentStoreCoordinator.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: nil, options: nil)
+        } catch {
+            print("Adding in-memory persistent store failed")
+        }
+        
+        let managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        managedObjectContext.persistentStoreCoordinator = persistentStoreCoordinator
+        
+        return managedObjectContext
     }
     
     override func tearDown() {
@@ -87,18 +107,22 @@ class FunctionalResourceTests: XCTestCase {
         XCTAssertEqual(employee.iq, 319)
     }
     
-//    func testExample() {
-//        let r = Punch.all()
-//        //let r = simpleResourceError
-//        //let r = simpleResourceSuccess
-//        r.download { result in
-//            switch(result) {
-//            case .success(let downloadedData):
-//                print("Download success, ready to import.")
-//                try! r.import(downloadedData)
-//            case .failure(let error):
-//                print("Download ERROR: \(error).")
-//            }
-//        }
-//    }
+    func testCoreDataImport() {
+        let testData: Resource.DownloadedData = ["iq" : 319, "name" : "Bradley"]
+        
+        let entity = NSEntityDescription.entity(forEntityName: "CDEmployee", in: mainMoc)!
+        let employee: CDEmployee = CDEmployee.init(entity: entity, insertInto: mainMoc)
+        let simpleResourceError = Resource(
+            download: { completion in
+                completion(Result.success(testData))
+        },
+            // Wow, cool, the member function is a Resource.Importer
+            import: employee.import
+        )
+        simpleResourceError.load()
+        XCTAssertEqual(employee.name, "Bradley")
+        XCTAssertEqual(employee.iq, 319)
+    }
+    
+    
 }
