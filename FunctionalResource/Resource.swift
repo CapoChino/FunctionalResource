@@ -54,13 +54,25 @@ class ProHttp {
 struct Employee {
     let name: String
     let iq: Int
-    
+}
+
+extension Employee {
     init(ir: Resource.DownloadedData) throws {
         guard let name = ir["name"] as? String else { throw PlaceholderError.something }
         guard let iq = ir["iq"] as? Int else { throw PlaceholderError.something }
         
         self.name = name
         self.iq = iq
+    }
+}
+
+var theOnlyOne: Employee?
+
+func employeeImport() -> Resource.Importer {
+    return { data in
+        let emp = try! Employee(ir: data)
+        // I see we'd kind of like to return this... We *could* put it in an out-of-band location such as a global ;P
+        theOnlyOne = emp
     }
 }
 

@@ -64,6 +64,14 @@ class FunctionalResourceTests: XCTestCase {
         XCTAssertEqual(bradley.iq, 319)
     }
     
+    func testOutOfBand() {
+        let data: Resource.DownloadedData = ["iq" : 319, "name" : "Bradley"]
+        try! employeeImport()(data)
+        let bradley = theOnlyOne!
+        XCTAssertEqual(bradley.name, "Bradley")
+        XCTAssertEqual(bradley.iq, 319)
+    }
+    
     
 //    func testExample() {
 //        let r = Punch.all()
