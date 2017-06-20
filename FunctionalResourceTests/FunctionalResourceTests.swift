@@ -124,6 +124,38 @@ class FunctionalResourceTests: XCTestCase {
     }
     
     // Note the above 2 aren't super-useful because they only import directly onto a given object. Let's make an importer that creates the object to import to.
-    
+    func fetchEmployees() -> [CDEmployee]? {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+        let entityDescription = NSEntityDescription.entity(forEntityName: "CDEmployee", in: mainMoc)!
+        fetchRequest.entity = entityDescription
+        do {
+            return try mainMoc.fetch(fetchRequest) as? [CDEmployee]
+        } catch {
+            let fetchError = error as NSError
+            print(fetchError)
+            return nil
+        }
+    }
+
+    func testCoreDataImport2() {
+        let testData: Resource.DownloadedData = ["iq" : 319, "name" : "Bradley"]
+        
+        func importer(data: Resource.DownloadedData) {
+            let entity = NSEntityDescription.entity(forEntityName: "CDEmployee", in: mainMoc)!
+            let newEmployee = CDEmployee.init(entity: entity, insertInto: mainMoc)
+            try! newEmployee.import(ir: data)
+        }
+        
+        let simpleResourceError = Resource(
+            download: { completion in
+                completion(Result.success(testData))
+        },
+            import: importer
+        )
+        simpleResourceError.load()
+        let employee = fetchEmployees()![0]
+        XCTAssertEqual(employee.name, "Bradley")
+        XCTAssertEqual(employee.iq, 319)
+    }
     
 }
