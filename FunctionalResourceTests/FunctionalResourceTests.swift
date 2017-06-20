@@ -137,6 +137,7 @@ class FunctionalResourceTests: XCTestCase {
         }
     }
 
+    
     func testCoreDataImport2() {
         let testData: Resource.DownloadedData = ["iq" : 319, "name" : "Bradley"]
         
@@ -153,9 +154,32 @@ class FunctionalResourceTests: XCTestCase {
             import: importer
         )
         simpleResourceError.load()
-        let employee = fetchEmployees()![0]
+        simpleResourceError.load()
+        let employees = fetchEmployees()!
+        XCTAssertEqual(employees.count, 2)
+        let employee = employees.first!
         XCTAssertEqual(employee.name, "Bradley")
         XCTAssertEqual(employee.iq, 319)
     }
     
+    // The above is better, but not generic.  Let's try for a generic CoreDataImporter
+    func testCoreDataImport3() {
+        let testData: Resource.DownloadedData = ["iq" : 319, "name" : "Bradley"]
+        
+        let simpleResourceError = Resource(
+            download: { completion in
+                completion(Result.success(testData))
+        },
+            import: CDEmployee.coreDataImporter(context: mainMoc)
+        )
+        simpleResourceError.load()
+        simpleResourceError.load()
+        let employees = fetchEmployees()!
+        XCTAssertEqual(employees.count, 2)
+        let employee = employees.first!
+        XCTAssertEqual(employee.name, "Bradley")
+        XCTAssertEqual(employee.iq, 319)
+    }
+    
+    // Now try a full find-or-create importer
 }

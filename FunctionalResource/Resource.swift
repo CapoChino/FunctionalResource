@@ -39,19 +39,7 @@ struct Resource {
     }
 }
 
-// MARK: Mocks
-class ProHttp {
-    static func get(url: URL, completion: @escaping (Result<[String: AnyHashable]>) -> Void) {
-        let data: [String: AnyHashable] = ["foo": 1, "name": "bradley"]
-        let result = Result.success(data)
-        print("Downloading: \(result)")
-        completion(result)
-    }
-}
-
-// MARK: Simple
-
-// Working with an immutable struct
+// MARK: Working with an immutable struct
 
 struct Employee {
     let name: String
@@ -79,7 +67,7 @@ func employeeImport() -> Resource.Importer {
 }
 
 
-// Working with a mutable struct or class
+// MARK: Working with a mutable struct or class
 
 class Employee2 {
     var name: String?
@@ -97,7 +85,7 @@ extension Employee2 {
     }
 }
 
-// Working with a CoreData Object
+// MARK: Working with a CoreData Object
 
 extension CDEmployee {
     // Note this member function is a Resource.Importer
@@ -112,60 +100,75 @@ extension CDEmployee {
     }
 }
 
-class Punch: NSManagedObject {
-    @NSManaged var name: String
-    @NSManaged var foo: Int
+
+protocol ManagedObject {
+    func `import`(ir: Resource.DownloadedData) throws
 }
 
-func importPunch(_ punch: Punch) -> Resource.Importer {
-    return { ir in
-        guard let name = ir["name"] as? String else { throw PlaceholderError.something }
-        guard let foo = ir["foo"] as? Int else { throw PlaceholderError.something }
-        
-        punch.name = name
-        punch.foo = foo
-        print("Imported: \(punch)")
-    }
-}
+extension CDEmployee: ManagedObject { }
 
-extension Punch {
-    
-    func `import`() -> Resource.Importer {
-        return importPunch(self)
-    }
-    
-    static func all() -> Resource {
-        let download: Resource.Downloader = { completion in
-            print("Attempting download.")
-            ProHttp.get(url: URL(fileURLWithPath: "")) { proHttpData in
-                let parsed = proHttpData as Result<Resource.DownloadedData>
-                completion(parsed)
-            }
-        }
-        
-        let punchImporter: Resource.Importer = {
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-            print("\(Punch.entity())")
-            let punch = Punch.init(entity: Punch.entity(), insertInto: context)
-            
-            let importer: Resource.Importer = { ir in
-                context.performAndWait {
-                    do {
-                        try punch.import()(ir)
-                        try context.save()
-                    } catch {
-                        context.rollback()
-                    }
+extension ManagedObject where Self : CDEmployee {
+    static func coreDataImporter(context: NSManagedObjectContext) -> Resource.Importer {
+        return { ir in
+            let newManagedObject = Self(context: context)
+            context.performAndWait {
+                do {
+                    try newManagedObject.import(ir: ir)
+                    try context.save()
+                } catch {
+                    context.rollback()
                 }
             }
-            return importer
-        }()
-        
-        return Resource(download: download, import: punchImporter)
+        }
     }
     
+    private static func lookupDictionary(from managedObjects: [Self]) -> [String: Self] {
+        return managedObjects.reduce([:]) { dict, managedObject in
+            var dict = dict
+            dict[managedObject.name!] = managedObject
+            return dict
+        }
+    }
+
+    /*
+    static func findOrCreateImporter(in context: NSManagedObjectContext, scopedTo predicate: NSPredicate) -> Resource.Importer {
+        return { ir in
+            let fetchRequest = Self.fetchRequest()
+            fetchRequest.predicate = predicate
+            let localEntities = try context.fetch(fetchRequest)
+            
+            var lookup = lookupDictionary(from: localEntities)
+            var remoteEntities = [Self]()
+            
+            //let importCache = try Self.preimport(ir, in: context)
+            try ir.forEach { jsonHelper in
+                let serverId: Int = try jsonHelper.value(forKey: Self.serverIdKey)
+                let managedObject = lookup[serverId] ?? Self(entity: NSEntityDescription.entity(forEntityName: Self.entityName(), in: context)!, insertInto: context)
+                
+                try managedObject.from(jsonHelper, with: importCache)
+                associateBlock?(managedObject)
+                remoteEntities.append(managedObject)
+                
+                // Remove this entry from lookup so that we know what to delete at the end
+                lookup[serverId] = nil
+            }
+            
+            // Now delete leftovers from db
+            if delete {
+                lookup.forEach { context.delete($0.1) }
+            }
+            
+            let newManagedObject = Self(context: context)
+            context.performAndWait {
+                do {
+                    try newManagedObject.import(ir: ir)
+                    try context.save()
+                } catch {
+                    context.rollback()
+                }
+            }
+        }
+    }
+    */
 }
-
-
-
 
