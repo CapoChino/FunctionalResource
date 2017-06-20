@@ -52,8 +52,8 @@ class ProHttp {
 // MARK: Simple
 
 struct Employee {
-    var name: String
-    var iq: Int
+    let name: String
+    let iq: Int
     
     init(ir: Resource.DownloadedData) throws {
         guard let name = ir["name"] as? String else { throw PlaceholderError.something }
