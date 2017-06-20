@@ -9,6 +9,9 @@
 import XCTest
 @testable import FunctionalResource
 
+// MARK: Mocks
+
+
 class FunctionalResourceTests: XCTestCase {
     
     override func setUp() {
@@ -21,16 +24,18 @@ class FunctionalResourceTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
+//    func testExample() {
+//        let r = Punch.all()
+//        //let r = simpleResourceError
+//        //let r = simpleResourceSuccess
+//        r.download { result in
+//            switch(result) {
+//            case .success(let downloadedData):
+//                print("Download success, ready to import.")
+//                try! r.import(downloadedData)
+//            case .failure(let error):
+//                print("Download ERROR: \(error).")
+//            }
+//        }
+//    }
 }

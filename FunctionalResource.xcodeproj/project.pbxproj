@@ -14,6 +14,7 @@
 		C928E30D1EF8C7AC00A72087 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C928E30C1EF8C7AC00A72087 /* Assets.xcassets */; };
 		C928E3101EF8C7AC00A72087 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C928E30E1EF8C7AC00A72087 /* LaunchScreen.storyboard */; };
 		C928E31B1EF8C7AC00A72087 /* FunctionalResourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E31A1EF8C7AC00A72087 /* FunctionalResourceTests.swift */; };
+		C928E3261EF8C7BF00A72087 /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C928E3251EF8C7BF00A72087 /* Resource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +39,7 @@
 		C928E3161EF8C7AC00A72087 /* FunctionalResourceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FunctionalResourceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C928E31A1EF8C7AC00A72087 /* FunctionalResourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FunctionalResourceTests.swift; sourceTree = "<group>"; };
 		C928E31C1EF8C7AC00A72087 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C928E3251EF8C7BF00A72087 /* Resource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 				C928E30E1EF8C7AC00A72087 /* LaunchScreen.storyboard */,
 				C928E3111EF8C7AC00A72087 /* Info.plist */,
 				C928E3091EF8C7AC00A72087 /* FunctionalResource.xcdatamodeld */,
+				C928E3251EF8C7BF00A72087 /* Resource.swift */,
 			);
 			path = FunctionalResource;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C928E3051EF8C7AC00A72087 /* ViewController.swift in Sources */,
+				C928E3261EF8C7BF00A72087 /* Resource.swift in Sources */,
 				C928E30B1EF8C7AC00A72087 /* FunctionalResource.xcdatamodeld in Sources */,
 				C928E3031EF8C7AC00A72087 /* AppDelegate.swift in Sources */,
 			);
