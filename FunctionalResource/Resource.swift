@@ -101,6 +101,8 @@ extension Employee2 {
 
 extension CDEmployee {
     // Note this member function is a Resource.Importer
+    // Note, the exact same import code works whether applied on a CoreData object or Plain-old-data-object
+    // TODO: Could take this a step further by using the same method in both cases. Might need to employ protocols or generics.
     func `import`(ir: Resource.DownloadedData) throws {
         guard let name = ir["name"] as? String else { throw PlaceholderError.something }
         guard let iq = ir["iq"] as? Int else { throw PlaceholderError.something }

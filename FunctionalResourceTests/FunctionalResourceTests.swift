@@ -110,8 +110,7 @@ class FunctionalResourceTests: XCTestCase {
     func testCoreDataImport() {
         let testData: Resource.DownloadedData = ["iq" : 319, "name" : "Bradley"]
         
-        let entity = NSEntityDescription.entity(forEntityName: "CDEmployee", in: mainMoc)!
-        let employee: CDEmployee = CDEmployee.init(entity: entity, insertInto: mainMoc)
+        let employee = CDEmployee.init(entity: CDEmployee.entity(), insertInto: mainMoc)
         let simpleResourceError = Resource(
             download: { completion in
                 completion(Result.success(testData))
@@ -123,6 +122,8 @@ class FunctionalResourceTests: XCTestCase {
         XCTAssertEqual(employee.name, "Bradley")
         XCTAssertEqual(employee.iq, 319)
     }
+    
+    // Note the above 2 aren't super-useful because they only import directly onto a given object. Let's make an importer that creates the object to import to.
     
     
 }
