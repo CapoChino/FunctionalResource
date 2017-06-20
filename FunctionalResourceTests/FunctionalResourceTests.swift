@@ -72,6 +72,20 @@ class FunctionalResourceTests: XCTestCase {
         XCTAssertEqual(bradley.iq, 319)
     }
     
+    func testMutableImport() {
+        let testData: Resource.DownloadedData = ["iq" : 319, "name" : "Bradley"]
+        let employee: Employee2 = Employee2()
+        let simpleResourceError = Resource(
+            download: { completion in
+                completion(Result.success(testData))
+        },
+            // Wow, cool, the member function is a Resource.Importer
+            import: employee.import
+        )
+        simpleResourceError.load()
+        XCTAssertEqual(employee.name, "Bradley")
+        XCTAssertEqual(employee.iq, 319)
+    }
     
 //    func testExample() {
 //        let r = Punch.all()

@@ -51,6 +51,8 @@ class ProHttp {
 
 // MARK: Simple
 
+// Working with an immutable struct
+
 struct Employee {
     let name: String
     let iq: Int
@@ -76,16 +78,24 @@ func employeeImport() -> Resource.Importer {
     }
 }
 
-//func importSimpleObject(simpleObject: SimpleObject) -> Resource.Importer {
-//    return { ir in
-//        guard let name = ir["name"] as? String else { throw PlaceholderError.something }
-//        guard let foo = ir["foo"] as? Int else { throw PlaceholderError.something }
-//
-//        simpleObject.name = name
-//        simpleObject.foo = foo
-//    }
-//}
 
+// Working with a mutable struct or class
+
+class Employee2 {
+    var name: String?
+    var iq: Int?
+}
+
+extension Employee2 {
+    // Note this member function is a Resource.Importer
+    func `import`(ir: Resource.DownloadedData) throws {
+        guard let name = ir["name"] as? String else { throw PlaceholderError.something }
+        guard let iq = ir["iq"] as? Int else { throw PlaceholderError.something }
+        
+        self.name = name
+        self.iq = iq
+    }
+}
 
 // MARK: CoreData
 
